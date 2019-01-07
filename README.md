@@ -32,7 +32,7 @@ This class is used to get the shape feature from an image.
 
 ```kotlin
 val shapeExtraction = ShapeExtraction(image)
-            println("ShapeFeature[Area: ${shapeExtraction.area}, Perimeter: ${shapeExtraction.perimeter}, Circularity: ${shapeExtraction.circulatiry}]")
+println("ShapeFeature[Area: ${shapeExtraction.area}, Perimeter: ${shapeExtraction.perimeter}, Circularity: ${shapeExtraction.circulatiry}]")
 // this is the output by using the example image
 // ShapeFeature[Area: 863.0, Perimeter: 2388.59117269516, Circularity: 0.0019008025843089407]
 ```
