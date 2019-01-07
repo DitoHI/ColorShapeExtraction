@@ -6,7 +6,7 @@ import javax.imageio.ImageIO
 fun main(args: Array<String>) {
     val currentRelativePath = Paths.get("")
     val s = currentRelativePath.toAbsolutePath().toString()
-    val mainDir = "$s/src/images/ex1.JPG"
+    val mainDir = "$s/images/ex1.JPG"
     val file = File(mainDir)
 
     if (file.isFile) {
