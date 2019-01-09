@@ -1,12 +1,14 @@
 import org.apache.commons.math3.stat.descriptive.moment.Mean
 import org.apache.commons.math3.stat.descriptive.moment.StandardDeviation
 import org.opencv.core.*
+import org.opencv.highgui.HighGui
 import org.opencv.imgcodecs.Imgcodecs
 import org.opencv.imgproc.Imgproc
 import java.awt.Color
 import java.awt.image.BufferedImage
 import java.awt.image.DataBufferByte
 import java.io.ByteArrayInputStream
+import java.io.ByteArrayOutputStream
 import javax.imageio.ImageIO
 
 open class CVImgProc {
@@ -24,7 +26,7 @@ open class CVImgProc {
     }
 
     fun bufferedImageToMat(_image: BufferedImage): Mat {
-        val mat = Mat(_image.height, _image.width, CvType.CV_8UC3)
+        val mat = Mat(_image.height, _image.width, CvType.CV_8UC(1))
         val data = (_image.raster.dataBuffer as DataBufferByte).data
         mat.put(0, 0, data)
         return mat
