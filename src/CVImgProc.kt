@@ -10,6 +10,12 @@ import java.awt.image.DataBufferByte
 import java.io.ByteArrayInputStream
 import java.io.ByteArrayOutputStream
 import javax.imageio.ImageIO
+import org.opencv.core.Mat
+import org.apache.commons.math3.stat.inference.TestUtils.g
+
+
+
+
 
 open class CVImgProc {
     lateinit var image: BufferedImage
@@ -26,10 +32,34 @@ open class CVImgProc {
     }
 
     fun bufferedImageToMat(_image: BufferedImage): Mat {
-        val mat = Mat(_image.height, _image.width, CvType.CV_8UC(1))
-        val data = (_image.raster.dataBuffer as DataBufferByte).data
-        mat.put(0, 0, data)
-        return mat
+        val out: Mat
+        val data: ByteArray
+        var r: Byte
+        var g: Byte
+        var b: Byte
+
+        if (_image.type == BufferedImage.TYPE_INT_RGB) {
+            out = Mat(_image.height, _image.width, CvType.CV_8UC3)
+            data = ByteArray(_image.width * _image.height * (out.elemSize()).toInt())
+            val dataBuff = _image.getRGB(0, 0, _image.width, _image.height, null, 0, _image.width)
+            for (i in 0 until dataBuff.size) {
+                data[i * 3] = (dataBuff[i] shr 0 and 0xFF).toByte()
+                data[i * 3 + 1] = (dataBuff[i] shr 8 and 0xFF).toByte()
+                data[i * 3 + 2] = (dataBuff[i] shr 16 and 0xFF).toByte()
+            }
+        } else {
+            out = Mat(_image.height, _image.width, CvType.CV_8UC1)
+            data = ByteArray(_image.width * _image.height * (out.elemSize()).toInt())
+            val dataBuff = _image.getRGB(0, 0, _image.width, _image.height, null, 0, _image.width)
+            for (i in 0 until dataBuff.size) {
+                r = (dataBuff[i] shr 0 and 0xFF).toByte()
+                g = (dataBuff[i] shr 8 and 0xFF).toByte()
+                b = (dataBuff[i] shr 16 and 0xFF).toByte()
+                data[i] = (0.21 * r + 0.71 * g + 0.07 * b).toByte()
+            }
+        }
+        out.put(0, 0, data)
+        return out
     }
 
     fun MatToBufferedImage(_matrix: Mat): BufferedImage {
