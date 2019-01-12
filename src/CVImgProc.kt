@@ -1,21 +1,13 @@
 import org.apache.commons.math3.stat.descriptive.moment.Mean
 import org.apache.commons.math3.stat.descriptive.moment.StandardDeviation
 import org.opencv.core.*
-import org.opencv.highgui.HighGui
 import org.opencv.imgcodecs.Imgcodecs
 import org.opencv.imgproc.Imgproc
 import java.awt.Color
 import java.awt.image.BufferedImage
-import java.awt.image.DataBufferByte
 import java.io.ByteArrayInputStream
-import java.io.ByteArrayOutputStream
 import javax.imageio.ImageIO
 import org.opencv.core.Mat
-import org.apache.commons.math3.stat.inference.TestUtils.g
-
-
-
-
 
 open class CVImgProc {
     lateinit var image: BufferedImage
@@ -38,17 +30,8 @@ open class CVImgProc {
         var g: Byte
         var b: Byte
 
-        if (_image.type == BufferedImage.TYPE_INT_RGB) {
-            out = Mat(_image.height, _image.width, CvType.CV_8UC3)
-            data = ByteArray(_image.width * _image.height * (out.elemSize()).toInt())
-            val dataBuff = _image.getRGB(0, 0, _image.width, _image.height, null, 0, _image.width)
-            for (i in 0 until dataBuff.size) {
-                data[i * 3] = (dataBuff[i] shr 0 and 0xFF).toByte()
-                data[i * 3 + 1] = (dataBuff[i] shr 8 and 0xFF).toByte()
-                data[i * 3 + 2] = (dataBuff[i] shr 16 and 0xFF).toByte()
-            }
-        } else {
-            out = Mat(_image.height, _image.width, CvType.CV_8UC1)
+        if (_image.type == BufferedImage.TYPE_BYTE_GRAY || _image.type == BufferedImage.TYPE_USHORT_GRAY) {
+            out = Mat(_image.height, _image.width, CvType.CV_8UC(1))
             data = ByteArray(_image.width * _image.height * (out.elemSize()).toInt())
             val dataBuff = _image.getRGB(0, 0, _image.width, _image.height, null, 0, _image.width)
             for (i in 0 until dataBuff.size) {
@@ -56,6 +39,15 @@ open class CVImgProc {
                 g = (dataBuff[i] shr 8 and 0xFF).toByte()
                 b = (dataBuff[i] shr 16 and 0xFF).toByte()
                 data[i] = (0.21 * r + 0.71 * g + 0.07 * b).toByte()
+            }
+        } else {
+            out = Mat(_image.height, _image.width, CvType.CV_8UC3)
+            data = ByteArray(_image.width * _image.height * (out.elemSize()).toInt())
+            val dataBuff = _image.getRGB(0, 0, _image.width, _image.height, null, 0, _image.width)
+            for (i in 0 until dataBuff.size) {
+                data[i * 3] = (dataBuff[i] shr 0 and 0xFF).toByte()
+                data[i * 3 + 1] = (dataBuff[i] shr 8 and 0xFF).toByte()
+                data[i * 3 + 2] = (dataBuff[i] shr 16 and 0xFF).toByte()
             }
         }
         out.put(0, 0, data)
@@ -160,7 +152,7 @@ class ColorExtraction: CVImgProc {
 class ShapeExtraction: CVImgProc {
     var area: Double = 0.0
     var perimeter: Double = 0.0
-    var circulatiry: Double = 0.0
+    var circularity: Double = 0.0
     lateinit var cannyImage: BufferedImage
     constructor()
     constructor(_image: BufferedImage): super(_image) {
@@ -171,7 +163,7 @@ class ShapeExtraction: CVImgProc {
         val hierarchy = Mat()
         val contourList = ArrayList<MatOfPoint>()
 
-        Imgproc.cvtColor(originalMat, grayMat, Imgproc.COLOR_BGR2GRAY)
+        Imgproc.cvtColor(originalMat, grayMat, Imgproc.COLOR_RGB2GRAY)
         Imgproc.Canny(originalMat, cannyEdges, 10.0, 100.0)
         Imgproc.findContours(cannyEdges, contourList, hierarchy, Imgproc.RETR_LIST, Imgproc.CHAIN_APPROX_SIMPLE)
 
@@ -202,6 +194,6 @@ class ShapeExtraction: CVImgProc {
         }
         this.area = currentMax
         this.perimeter = arcLength
-        this.circulatiry = circularity
+        this.circularity = circularity
     }
 }

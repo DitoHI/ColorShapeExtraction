@@ -21,7 +21,7 @@ fun main(args: Array<String>) {
 
             // Feature Extraction
             val shapeExtraction = ShapeExtraction(image)
-            println("ShapeFeature[Area: ${shapeExtraction.area}, Perimeter: ${shapeExtraction.perimeter}, Circularity: ${shapeExtraction.circulatiry}]")
+            println("ShapeFeature[Area: ${shapeExtraction.area}, Perimeter: ${shapeExtraction.perimeter}, Circularity: ${shapeExtraction.circularity}]")
         } catch (e: IOException) {
             println("Error ${e.message}")
         }

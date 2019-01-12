@@ -2,3 +2,5 @@
 out/
 OpenCVProject.iml
 src/TempMain.kt
+*.log
+image-feature.json
