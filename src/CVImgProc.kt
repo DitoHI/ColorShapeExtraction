@@ -9,7 +9,7 @@ import java.io.ByteArrayInputStream
 import javax.imageio.ImageIO
 import org.opencv.core.Mat
 
-open class CVImgProc {
+abstract class CVImgProc {
     lateinit var image: BufferedImage
     var width = 0
     var height = 0
